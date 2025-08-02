@@ -49,13 +49,17 @@ export default function PlaceCard({
   if (variant === "compact") {
     return (
       <Card className="city-card border-0 hover:shadow-lg transition-all duration-200 cursor-pointer">
-        <Link href={`/places/${place.place_id}`}>
+        <Link 
+          href={`/places/${place.place_id}`}
+          className="block focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 rounded-2xl"
+          aria-label={`Visa detaljer för ${place.name}`}
+        >
           <CardContent className="p-4">
             <div className="flex gap-3">
               <div className="relative w-16 h-16 flex-shrink-0">
                 <Image
                   src={photoUrl}
-                  alt={place.name}
+                  alt={`Bild av ${place.name}`}
                   fill
                   className="object-cover rounded-xl"
                   sizes="64px"
@@ -72,9 +76,9 @@ export default function PlaceCard({
                     {place.name}
                   </h3>
                   {place.rating && (
-                    <div className="flex items-center gap-1 flex-shrink-0">
-                      <Star className="h-3.5 w-3.5 text-yellow-400 fill-current" />
-                      <span className="text-xs font-medium">
+                    <div className="flex items-center gap-1 flex-shrink-0" aria-label={`Betyg ${place.rating} av 5 stjärnor`}>
+                      <Star className="h-3.5 w-3.5 text-yellow-400 fill-current" aria-hidden="true" />
+                      <span className="text-xs font-medium" aria-hidden="true">
                         {place.rating}
                       </span>
                     </div>
@@ -121,7 +125,7 @@ export default function PlaceCard({
       <div className="relative h-48 overflow-hidden rounded-t-2xl">
         <Image
           src={photoUrl}
-          alt={place.name}
+          alt={`Bild av ${place.name}`}
           fill
           className="object-cover group-hover:scale-105 transition-transform duration-300"
           sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"

@@ -40,7 +40,15 @@ const nextConfig: NextConfig = {
 
   // Experimentella funktioner för bättre prestanda
   experimental: {
-    optimizePackageImports: ['lucide-react'],
+    optimizePackageImports: ['lucide-react', '@radix-ui/react-slot', '@radix-ui/react-separator'],
+  },
+
+  // Externa paket för server components
+  serverExternalPackages: ['@supabase/supabase-js'],
+
+  // Ytterligare prestandaoptimiseringar
+  compiler: {
+    removeConsole: process.env.NODE_ENV === 'production',
   },
 
   // Headers för säkerhet och prestanda
@@ -69,6 +77,24 @@ const nextConfig: NextConfig = {
           {
             key: 'Cache-Control',
             value: 'public, max-age=300, stale-while-revalidate=60',
+          },
+        ],
+      },
+      {
+        source: '/api/photos/(.*)',
+        headers: [
+          {
+            key: 'Cache-Control',
+            value: 'public, max-age=86400, stale-while-revalidate=604800', // Cache foton längre
+          },
+        ],
+      },
+      {
+        source: '/_next/static/(.*)',
+        headers: [
+          {
+            key: 'Cache-Control',
+            value: 'public, max-age=31536000, immutable', // Cache statiska assets 1 år
           },
         ],
       },

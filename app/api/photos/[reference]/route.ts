@@ -10,6 +10,12 @@ export async function GET(
   const searchParams = request.nextUrl.searchParams;
   const maxWidth = searchParams.get('maxwidth') || '400';
 
+  // Om mock photo reference, returnera placeholder
+  if (photoReference.startsWith('mock_')) {
+    console.log('🔄 Returnerar placeholder för mock foto');
+    return NextResponse.redirect(new URL('/placeholder.jpg', request.url));
+  }
+
   // Om vi saknar API-nyckel
   if (!GOOGLE_API_KEY || GOOGLE_API_KEY.includes('your_')) {
     // Redirect till placeholder bild
