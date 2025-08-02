@@ -1,50 +1,116 @@
 import { NextRequest, NextResponse } from 'next/server';
 
+const GOOGLE_API_KEY = process.env.GOOGLE_API_KEY;
+
 export async function GET(
   request: NextRequest,
-  context: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
-  const placeId = context.params.id;
-  console.log(`🔄 API route anropad - /api/places/${placeId}`);
+  const { id: placeId } = await params;
+  
+  console.log(`🔍 API route anropad med place_id: ${placeId}`);
 
-  if (!placeId) {
-    return NextResponse.json({ error: 'Place ID required' }, { status: 400 });
+  // Kontrollera om vi har giltig API-nyckel
+  if (!GOOGLE_API_KEY || GOOGLE_API_KEY.includes('your_')) {
+    console.error('❌ Ingen giltig Google API-nyckel konfigurerad');
+    return NextResponse.json({ error: 'API-nyckel saknas' }, { status: 500 });
   }
 
-  // Mock place details baserat på place_id
-  const mockPlaceDetails = {
-    place_id: placeId,
-    name: placeId.includes('mock_1') ? "Café Bageri Petrus" : 
-          placeId.includes('mock_2') ? "Café Central" : "Test Plats",
-    formatted_address: placeId.includes('mock_1') ? "Kungsgatan 26, Karlstad" :
-                      placeId.includes('mock_2') ? "Drottninggatan 5, Karlstad" : "Karlstad, Sverige",
-    rating: placeId.includes('mock_1') ? 4.4 : 4.2,
-    price_level: 1,
-    types: ["cafe", "food", "establishment"],
-    opening_hours: {
-      open_now: true,
-      weekday_text: [
-        "måndag: 07:00 – 18:00",
-        "tisdag: 07:00 – 18:00", 
-        "onsdag: 07:00 – 18:00",
-        "torsdag: 07:00 – 18:00",
-        "fredag: 07:00 – 19:00",
-        "lördag: 08:00 – 17:00",
-        "söndag: 09:00 – 16:00"
-      ]
-    },
-    geometry: { 
-      location: placeId.includes('mock_1') ? 
-        { lat: 59.3800, lng: 13.5045 } : 
-        { lat: 59.3801, lng: 13.5055 }
-    },
-    website: "https://example.com",
-    formatted_phone_number: "054-123 45 67",
-    editorial_summary: {
-      overview: `Ett mysigt café i centrala Karlstad. Perfekt för en fika eller en lugn stund med kaffe och bakverk.`
-    }
-  };
+  try {
+    console.log(`🌐 Hämtar platsdetaljer från Google Places API för ID: ${placeId}`);
+    
+    // Google Places Details API
+    const baseUrl = 'https://maps.googleapis.com/maps/api/place/details/json';
+    const params = new URLSearchParams({
+      place_id: placeId,
+      key: GOOGLE_API_KEY,
+      language: 'sv',
+      fields: [
+        'place_id',
+        'name', 
+        'formatted_address',
+        'rating',
+        'price_level',
+        'types',
+        'opening_hours',
+        'current_opening_hours',
+        'geometry',
+        'website',
+        'formatted_phone_number',
+        'international_phone_number',
+        'reviews',
+        'editorial_summary',
+        'photos'
+      ].join(',')
+    });
 
-  console.log(`🔍 Returnerar detaljer för plats: ${mockPlaceDetails.name}`);
-  return NextResponse.json(mockPlaceDetails);
+    const response = await fetch(`${baseUrl}?${params.toString()}`);
+    
+    if (!response.ok) {
+      throw new Error(`Google Places API error: ${response.status}`);
+    }
+
+    const data = await response.json();
+    
+    if (data.error_message) {
+      throw new Error(`Google Places API error: ${data.error_message}`);
+    }
+
+    if (!data.result) {
+      return NextResponse.json({ error: 'Plats hittades inte' }, { status: 404 });
+    }
+
+    const place = data.result;
+    
+    // Mappa Google Places resultatet till vårt format
+    const placeDetails = {
+      place_id: place.place_id,
+      name: place.name,
+      formatted_address: place.formatted_address,
+      rating: place.rating,
+      price_level: place.price_level,
+      types: place.types || [],
+      opening_hours: place.opening_hours ? {
+        open_now: place.opening_hours.open_now,
+        weekday_text: place.opening_hours.weekday_text
+      } : undefined,
+      current_opening_hours: place.current_opening_hours ? {
+        open_now: place.current_opening_hours.open_now,
+        weekday_text: place.current_opening_hours.weekday_text,
+        periods: place.current_opening_hours.periods
+      } : undefined,
+      geometry: {
+        location: {
+          lat: place.geometry.location.lat,
+          lng: place.geometry.location.lng
+        }
+      },
+      website: place.website,
+      formatted_phone_number: place.formatted_phone_number,
+      international_phone_number: place.international_phone_number,
+      reviews: place.reviews?.slice(0, 5).map((review: any) => ({
+        author_name: review.author_name,
+        rating: review.rating,
+        text: review.text,
+        time: review.time
+      })),
+      editorial_summary: place.editorial_summary ? {
+        overview: place.editorial_summary.overview
+      } : undefined,
+      photos: place.photos?.slice(0, 5).map((photo: any) => ({
+        photo_reference: photo.photo_reference,
+        height: photo.height,
+        width: photo.width
+      }))
+    };
+
+    console.log(`✅ Hämtade detaljer för plats: ${place.name}`);
+    return NextResponse.json(placeDetails);
+
+  } catch (error) {
+    console.error('❌ Fel vid hämtning av platsdetaljer:', error);
+    
+    // Returnera fel istället för mock data
+    return NextResponse.json({ error: 'Kunde inte hämta platsdetaljer' }, { status: 500 });
+  }
 }

@@ -6,14 +6,11 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 **Stadsguiden** (City Guide) is a modern Swedish city exploration app built with Next.js 15. It helps users discover restaurants, shops, and attractions using Google Places API, with weather integration via OpenWeatherMap API.
 
-Working directory: `cityviewer/` (the actual Next.js project is in this subfolder)
+Working directory: Root directory (the Next.js project is at the repository root)
 
 ## Development Commands
 
 ```bash
-# Navigate to project directory first
-cd cityviewer
-
 # Development
 npm run dev          # Start dev server with Turbopack
 npm run build        # Production build
@@ -62,11 +59,13 @@ NEXT_PUBLIC_DEMO_MODE=true (for development without real APIs)
 ## File Structure Highlights
 
 ```
-cityviewer/
 ├── app/
-│   ├── places/[id]/page.tsx    # Individual place detail page
-│   ├── places/page.tsx         # Search and results page
-│   └── page.tsx               # Homepage
+│   ├── api/                   # API routes
+│   │   ├── places/            # Google Places API endpoints
+│   │   └── photos/            # Photo proxy endpoints
+│   ├── places/[id]/page.tsx   # Individual place detail page
+│   ├── places/page.tsx        # Search and results page
+│   └── page.tsx              # Homepage
 ├── components/
 │   ├── ui/                    # Shadcn UI components
 │   └── *.tsx                  # Custom components
