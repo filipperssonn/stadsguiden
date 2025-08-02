@@ -9,92 +9,10 @@ export async function GET(request: NextRequest) {
   const location = searchParams.get('location') || 'Karlstad';
   const type = searchParams.get('type');
 
-  // Om demo mode eller ingen API-nyckel, returnera mock data
-  if (process.env.NEXT_PUBLIC_DEMO_MODE === 'true' || !GOOGLE_API_KEY || GOOGLE_API_KEY.includes('your_')) {
-    console.log('🔄 Använder mock data (API route)');
-    
-    // Mock data för Karlstad
-    const mockPlaces = [
-      {
-        place_id: "mock_1",
-        name: "Café Bageri Petrus",
-        formatted_address: "Kungsgatan 26, Karlstad",
-        rating: 4.4,
-        price_level: 1,
-        types: ["cafe", "bakery", "food"],
-        opening_hours: { open_now: true },
-        geometry: { location: { lat: 59.3800, lng: 13.5045 } },
-        photos: [{
-          photo_reference: "mock_photo_1",
-          height: 400,
-          width: 600
-        }]
-      },
-      {
-        place_id: "mock_2", 
-        name: "Café Central",
-        formatted_address: "Drottninggatan 5, Karlstad",
-        rating: 4.2,
-        price_level: 1,
-        types: ["cafe", "food", "establishment"],
-        opening_hours: { open_now: true },
-        geometry: { location: { lat: 59.3801, lng: 13.5055 } },
-        photos: [{
-          photo_reference: "mock_photo_2",
-          height: 400,
-          width: 600
-        }]
-      },
-      {
-        place_id: "mock_3",
-        name: "Pizzeria Milano",
-        formatted_address: "Västra Torggatan 10, Karlstad",
-        rating: 4.0,
-        price_level: 2,
-        types: ["restaurant", "food", "meal_takeaway"],
-        opening_hours: { open_now: true },
-        geometry: { location: { lat: 59.3795, lng: 13.5050 } }
-      },
-      {
-        place_id: "mock_4",
-        name: "Systembolaget Karlstad",
-        formatted_address: "Köpmangatan 15, Karlstad",
-        rating: 3.8,
-        price_level: 2,
-        types: ["store", "liquor_store"],
-        opening_hours: { open_now: false },
-        geometry: { location: { lat: 59.3802, lng: 13.5048 } }
-      },
-      {
-        place_id: "mock_5",
-        name: "Domkyrkan",
-        formatted_address: "Kungsgatan 18, Karlstad",
-        rating: 4.6,
-        types: ["church", "place_of_worship", "tourist_attraction"],
-        opening_hours: { open_now: true },
-        geometry: { location: { lat: 59.3798, lng: 13.5047 } }
-      }
-    ];
-
-    let filteredPlaces = mockPlaces;
-    
-    // Filtrera baserat på typ
-    if (type && type !== 'all') {
-      filteredPlaces = filteredPlaces.filter(place => 
-        place.types.some(t => t.includes(type))
-      );
-    }
-
-    // Filtrera baserat på sökfråga
-    if (query.trim()) {
-      filteredPlaces = filteredPlaces.filter(place =>
-        place.name.toLowerCase().includes(query.toLowerCase()) ||
-        place.types.some(t => t.toLowerCase().includes(query.toLowerCase()))
-      );
-    }
-
-    console.log(`🔍 Returnerar ${filteredPlaces.length} platser för query: "${query}"`);
-    return NextResponse.json(filteredPlaces);
+  // Kontrollera om vi har giltig API-nyckel
+  if (!GOOGLE_API_KEY || GOOGLE_API_KEY.includes('your_')) {
+    console.error('❌ Ingen giltig Google API-nyckel konfigurerad');
+    return NextResponse.json({ error: 'API-nyckel saknas eller ogiltig' }, { status: 500 });
   }
 
   try {
