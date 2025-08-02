@@ -21,7 +21,7 @@ export default function PlaceCard({
   const isOpen = place.opening_hours?.open_now;
   const hasPhoto = place.photos && place.photos.length > 0 && place.photos[0].photo_reference;
   const photoUrl = hasPhoto
-    ? getPhotoUrl(place.photos[0].photo_reference, 400)
+    ? getPhotoUrl(place.photos![0].photo_reference, 400)
     : "/placeholder.jpg";
 
   const getPriceLevel = (level?: number) => {

@@ -159,10 +159,24 @@ Applikationen fungerar även utan API-nycklar:
 
 ### Vercel (Rekommenderat)
 
-```bash
-npm run build
-npx vercel
-```
+1. **Förbered för deployment:**
+   ```bash
+   npm run build
+   ```
+
+2. **Deploy till Vercel:**
+   - Connecta ditt GitHub-repo till Vercel
+   - Eller använd Vercel CLI: `npx vercel`
+
+3. **Konfigurera miljövariabler i Vercel:**
+   - Gå till ditt projekt i Vercel Dashboard
+   - Settings → Environment Variables
+   - Lägg till alla variabler från `.env.example`
+
+4. **Vercel-specifika filer:**
+   - `vercel.json` - Deployment konfiguration
+   - `.vercelignore` - Filer att exkludera från deployment
+   - `.env.example` - Template för miljövariabler
 
 ### Andra plattformar
 

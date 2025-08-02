@@ -156,7 +156,7 @@ export default function PlaceDetailClient() {
 
   const hasPhoto = place.photos && place.photos.length > 0 && place.photos[0].photo_reference;
   const photoUrl = hasPhoto
-    ? getPhotoUrl(place.photos[0].photo_reference, 800)
+    ? getPhotoUrl(place.photos![0].photo_reference, 800)
     : "/placeholder.jpg";
   const isOpen =
     place.current_opening_hours?.open_now ?? place.opening_hours?.open_now;
@@ -437,7 +437,7 @@ export default function PlaceDetailClient() {
                   </CardHeader>
                   <CardContent>
                     <div className="space-y-6">
-                      {place.reviews.slice(0, 5).map((review, index) => (
+                      {place.reviews?.slice(0, 5).map((review, index) => (
                         <div key={index} className="border-l-4 border-gray-100 pl-4">
                           <div className="flex items-start justify-between mb-2">
                             <div className="flex items-center gap-2">
@@ -469,15 +469,15 @@ export default function PlaceDetailClient() {
                           <p className="text-gray-600 leading-relaxed text-sm">
                             {review.text}
                           </p>
-                          {index < Math.min(place.reviews.length - 1, 4) && (
+                          {index < Math.min((place.reviews?.length || 0) - 1, 4) && (
                             <Separator className="mt-4" />
                           )}
                         </div>
                       ))}
-                      {place.reviews.length > 5 && (
+                      {(place.reviews?.length || 0) > 5 && (
                         <div className="text-center pt-2">
                           <span className="text-sm text-gray-500">
-                            Visar 5 av {place.reviews.length} recensioner
+                            Visar 5 av {place.reviews?.length || 0} recensioner
                           </span>
                         </div>
                       )}
