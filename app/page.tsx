@@ -73,8 +73,8 @@ export default function HomePage() {
                 <Image
                   src="/stadsguiden-logo.svg"
                   alt="Stadsguiden - Upptäck din stad"
-                  width={160}
-                  height={50}
+                  width={180}
+                  height={40}
                   priority
                   className="max-w-none"
                 />

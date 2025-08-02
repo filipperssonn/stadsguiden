@@ -101,6 +101,18 @@ export const metadata: Metadata = {
   verification: {
     google: process.env.GOOGLE_SITE_VERIFICATION,
   },
+  other: {
+    'application-name': 'Stadsguiden',
+    'apple-mobile-web-app-capable': 'yes',
+    'apple-mobile-web-app-status-bar-style': 'default',
+    'apple-mobile-web-app-title': 'Stadsguiden',
+    'format-detection': 'telephone=no',
+    'mobile-web-app-capable': 'yes',
+    'msapplication-config': '/browserconfig.xml',
+    'msapplication-TileColor': '#FFC107',
+    'msapplication-tap-highlight': 'no',
+    'theme-color': '#FFC107',
+  },
   alternates: {
     canonical: "https://stadsguiden.vercel.app",
     languages: {

@@ -107,9 +107,10 @@ export default function PlaceCard({
                         className={`flex items-center gap-1 text-xs ${
                           isOpen ? "text-green-600" : "text-red-500"
                         }`}
+                        aria-label={isOpen ? "Öppet nu" : "Stängt just nu"}
                       >
-                        <Clock className="h-3 w-3" />
-                        <span>{isOpen ? "Öppet" : "Stängt"}</span>
+                        <Clock className="h-3 w-3" aria-hidden="true" />
+                        <span aria-hidden="true">{isOpen ? "Öppet" : "Stängt"}</span>
                       </div>
                     )}
                   </div>
@@ -143,16 +144,22 @@ export default function PlaceCard({
 
         {/* Rating overlay */}
         {place.rating && (
-          <div className="absolute top-3 right-3 bg-white/90 backdrop-blur-sm rounded-xl px-2.5 py-1.5 flex items-center gap-1 shadow-lg">
-            <Star className="h-4 w-4 text-yellow-400 fill-current" />
-            <span className="text-sm font-semibold">{place.rating}</span>
+          <div 
+            className="absolute top-3 right-3 bg-white/90 backdrop-blur-sm rounded-xl px-2.5 py-1.5 flex items-center gap-1 shadow-lg"
+            aria-label={`Betyg ${place.rating} av 5 stjärnor`}
+          >
+            <Star className="h-4 w-4 text-yellow-400 fill-current" aria-hidden="true" />
+            <span className="text-sm font-semibold" aria-hidden="true">{place.rating}</span>
           </div>
         )}
 
         {/* Price level overlay */}
         {getPriceLevel(place.price_level) && (
-          <div className="absolute top-3 left-3 bg-white/90 backdrop-blur-sm rounded-xl px-2.5 py-1.5 shadow-lg">
-            <span className="text-sm font-semibold text-gray-700">
+          <div 
+            className="absolute top-3 left-3 bg-white/90 backdrop-blur-sm rounded-xl px-2.5 py-1.5 shadow-lg"
+            aria-label={`Prisnivå ${getPriceLevel(place.price_level)}`}
+          >
+            <span className="text-sm font-semibold text-gray-700" aria-hidden="true">
               {getPriceLevel(place.price_level)}
             </span>
           </div>
@@ -165,8 +172,10 @@ export default function PlaceCard({
             {place.name}
           </h3>
           <div className="flex items-center gap-2 text-gray-500 mb-3">
-            <MapPin className="h-4 w-4 flex-shrink-0" />
-            <span className="text-sm">{place.formatted_address}</span>
+            <MapPin className="h-4 w-4 flex-shrink-0" aria-hidden="true" />
+            <span className="text-sm" aria-label={`Adress: ${place.formatted_address}`}>
+              {place.formatted_address}
+            </span>
           </div>
         </div>
 
@@ -188,7 +197,7 @@ export default function PlaceCard({
                   : "bg-red-100 text-red-700"
               }`}
             >
-              <Clock className="h-3 w-3 mr-1" />
+              <Clock className="h-3 w-3 mr-1" aria-hidden="true" />
               {isOpen ? "Öppet nu" : "Stängt"}
             </Badge>
           )}
@@ -196,7 +205,10 @@ export default function PlaceCard({
 
         <div className="flex gap-2 pt-2">
           <Link href={`/places/${place.place_id}`} className="flex-1">
-            <Button className="w-full city-primary hover:city-secondary rounded-2xl font-semibold">
+            <Button 
+              className="w-full city-primary hover:city-secondary rounded-2xl font-semibold"
+              aria-label={`Visa detaljer för ${place.name}`}
+            >
               Visa detaljer
             </Button>
           </Link>
@@ -213,8 +225,9 @@ export default function PlaceCard({
                 window.open(`tel:${place.formatted_phone_number}`, "_self")
               }
               className="flex items-center gap-1.5 h-8 px-3 text-xs rounded-xl"
+              aria-label={`Ring ${place.name} på ${place.formatted_phone_number}`}
             >
-              <Phone className="h-3.5 w-3.5" />
+              <Phone className="h-3.5 w-3.5" aria-hidden="true" />
               Ring
             </Button>
           )}
@@ -226,10 +239,11 @@ export default function PlaceCard({
                 window.open(place.website, "_blank", "noopener,noreferrer")
               }
               className="flex items-center gap-1.5 h-8 px-3 text-xs rounded-xl"
+              aria-label={`Besök hemsidan för ${place.name} (öppnas i ny flik)`}
             >
-              <Globe className="h-3.5 w-3.5" />
+              <Globe className="h-3.5 w-3.5" aria-hidden="true" />
               Hemsida
-              <ExternalLink className="h-3 w-3" />
+              <ExternalLink className="h-3 w-3" aria-hidden="true" />
             </Button>
           )}
         </div>

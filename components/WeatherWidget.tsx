@@ -28,22 +28,34 @@ export default function WeatherWidget({
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
+    const abortController = new AbortController();
+    
     const fetchWeather = async () => {
       setLoading(true);
       setError(null);
 
       try {
         const weatherData = await getCurrentWeather(city);
-        setWeather(weatherData);
+        if (!abortController.signal.aborted) {
+          setWeather(weatherData);
+        }
       } catch (err) {
-        setError("Kunde inte hämta väderdata");
-        console.error(err);
+        if (!abortController.signal.aborted) {
+          setError("Kunde inte hämta väderdata");
+          console.error(err);
+        }
       } finally {
-        setLoading(false);
+        if (!abortController.signal.aborted) {
+          setLoading(false);
+        }
       }
     };
 
     fetchWeather();
+    
+    return () => {
+      abortController.abort();
+    };
   }, [city]);
 
   if (loading) {

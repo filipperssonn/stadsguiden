@@ -181,8 +181,8 @@ export default function PlaceDetailClient() {
                 <Image
                   src="/stadsguiden-logo.svg"
                   alt="Stadsguiden"
-                  width={160}
-                  height={50}
+                  width={180}
+                  height={40}
                   priority
                   className="max-w-none"
                 />

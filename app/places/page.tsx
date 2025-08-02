@@ -110,14 +110,14 @@ function PlacesContent() {
         category === "all" ? undefined : category
       );
       setPlaces(results);
-      applyFilters(results, filters);
+      setFilteredPlaces(results);
     } catch (err) {
       setError("Något gick fel vid sökningen. Försök igen.");
       console.error(err);
     } finally {
       setLoading(false);
     }
-  }, [currentCity, filters]);
+  }, [currentCity]);
 
   // Initial search on page load
   useEffect(() => {
@@ -181,8 +181,8 @@ function PlacesContent() {
                 <Image
                   src="/stadsguiden-logo.svg"
                   alt="Stadsguiden"
-                  width={160}
-                  height={50}
+                  width={180}
+                  height={40}
                   priority
                   className="max-w-none"
                 />
