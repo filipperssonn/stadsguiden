@@ -1,11 +1,11 @@
 {
-  "buildCommand": "npm run build",
-  "outputDirectory": ".next",
+  "buildCommand": "cd cityviewer && npm install && npm run build",
+  "outputDirectory": "cityviewer/.next",
   "framework": "nextjs",
-  "installCommand": "npm install",
+  "installCommand": "cd cityviewer && npm install",
   "regions": ["arn1"],
   "functions": {
-    "app/api/**/*.ts": {
+    "cityviewer/app/api/**/*.ts": {
       "maxDuration": 30
     }
   },
