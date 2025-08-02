@@ -104,7 +104,7 @@ export default function WeatherWidget({
     >
       <CardContent className={`${compact ? "p-0" : "p-0"} space-y-3`}>
         <div className="flex items-center gap-3">
-          <div className="relative bg-white/80 backdrop-blur-sm rounded-2xl p-2 shadow-lg">
+          <div className="relative bg-white/80 backdrop-blur-sm rounded-2xl p-2 shadow-lg hidden md:block">
             <Image
               src={getWeatherIconUrl(weather.icon)}
               alt={weather.description}
