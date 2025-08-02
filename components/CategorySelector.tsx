@@ -51,7 +51,11 @@ export default function CategorySelector({
 }: CategorySelectorProps) {
   return (
     <div className="w-full space-y-4">
-      <div className="flex flex-wrap gap-2 justify-center sm:justify-start">
+      <div 
+        className="flex flex-wrap gap-2 justify-center sm:justify-start"
+        role="group"
+        aria-label="Välj kategori för platser"
+      >
         {categories.map((category) => {
           const isSelected = selectedCategory === category.id;
           return (
@@ -68,8 +72,10 @@ export default function CategorySelector({
                     : "bg-white border-gray-200 text-gray-700 hover:border-primary hover:text-primary hover:bg-primary/5"
                 }
               `}
+              aria-pressed={isSelected}
+              aria-label={`${isSelected ? 'Vald kategori' : 'Välj kategori'}: ${category.name}`}
             >
-              {category.icon}
+              <span aria-hidden="true">{category.icon}</span>
               <span>{category.name}</span>
             </Button>
           );

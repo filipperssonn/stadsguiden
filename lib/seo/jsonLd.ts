@@ -1,6 +1,41 @@
 // Strukturerad data för SEO
-export function generatePlaceJsonLd(place: any) {
+interface PlaceForJsonLd {
+  name: string;
+  formatted_address?: string;
+  rating?: number;
+  types: string[];
+  opening_hours?: {
+    open_now?: boolean;
+    weekday_text?: string[];
+  };
+  formatted_phone_number?: string;
+  website?: string;
+  geometry?: {
+    location?: {
+      lat: number;
+      lng: number;
+    };
+  };
+  place_id: string;
+  reviews?: Array<{
+    author_name: string;
+    rating: number;
+    text: string;
+    time: number;
+  }>;
+  editorial_summary?: {
+    overview?: string;
+  };
+}
+
+export function generatePlaceJsonLd(place: PlaceForJsonLd, city?: string) {
   const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://stadsguiden.se';
+  
+  // Försök extrahera stad och region från adress eller använd medskickad stad
+  const addressParts = place.formatted_address?.split(', ') || [];
+  const extractedCity = city || addressParts.find((part: string) => 
+    !part.includes('Sweden') && !part.match(/^\d{3}\s?\d{2}/) // Inte postnummer
+  ) || 'Sverige';
   
   return {
     '@context': 'https://schema.org',
@@ -10,8 +45,7 @@ export function generatePlaceJsonLd(place: any) {
     address: {
       '@type': 'PostalAddress',
       streetAddress: place.formatted_address,
-      addressLocality: 'Karlstad',
-      addressRegion: 'Värmland',
+      addressLocality: extractedCity,
       addressCountry: 'SE',
     },
     ...(place.rating && {
@@ -60,16 +94,19 @@ export function generatePlaceJsonLd(place: any) {
   };
 }
 
-export function generateOrganizationJsonLd() {
+export function generateOrganizationJsonLd(city?: string) {
   const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://stadsguiden.se';
+  const description = city 
+    ? `Upptäck de bästa restaurangerna, butikerna och sevärdheterna i ${city}`
+    : 'Upptäck de bästa restaurangerna, butikerna och sevärdheterna i svenska städer';
   
   return {
     '@context': 'https://schema.org',
     '@type': 'Organization',
     name: 'Stadsguiden',
-    description: 'Upptäck de bästa restaurangerna, butikerna och sevärdheterna i Karlstad',
+    description,
     url: baseUrl,
-    logo: `${baseUrl}/logo.png`,
+    logo: `${baseUrl}/stadsguiden-logo.svg`,
     contactPoint: {
       '@type': 'ContactPoint',
       contactType: 'customer service',
@@ -82,20 +119,25 @@ export function generateOrganizationJsonLd() {
   };
 }
 
-export function generateWebsiteJsonLd() {
+export function generateWebsiteJsonLd(city?: string) {
   const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://stadsguiden.se';
+  const description = city 
+    ? `Upptäck de bästa restaurangerna, butikerna och sevärdheterna i ${city}`
+    : 'Upptäck de bästa restaurangerna, butikerna och sevärdheterna i svenska städer';
   
   return {
     '@context': 'https://schema.org',
     '@type': 'WebSite',
     name: 'Stadsguiden',
-    description: 'Upptäck de bästa restaurangerna, butikerna och sevärdheterna i Karlstad',
+    description,
     url: baseUrl,
     potentialAction: {
       '@type': 'SearchAction',
       target: {
         '@type': 'EntryPoint',
-        urlTemplate: `${baseUrl}/places?q={search_term_string}`,
+        urlTemplate: city 
+          ? `${baseUrl}/places?q={search_term_string}&city=${encodeURIComponent(city)}`
+          : `${baseUrl}/places?q={search_term_string}`,
       },
       'query-input': 'required name=search_term_string',
     },

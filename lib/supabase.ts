@@ -122,7 +122,7 @@ export async function removeFromFavorites(placeId: string) {
   if (!supabase) {
     // Fallback: använd localStorage
     const favorites = JSON.parse(localStorage.getItem('favorites') || '[]');
-    const filtered = favorites.filter((fav: any) => fav.place_id !== placeId);
+    const filtered = favorites.filter((fav: { place_id: string }) => fav.place_id !== placeId);
     localStorage.setItem('favorites', JSON.stringify(filtered));
     return;
   }
@@ -162,7 +162,7 @@ export async function isFavorite(placeId: string): Promise<boolean> {
   if (!supabase) {
     // Fallback: använd localStorage
     const favorites = JSON.parse(localStorage.getItem('favorites') || '[]');
-    return favorites.some((fav: any) => fav.place_id === placeId);
+    return favorites.some((fav: { place_id: string }) => fav.place_id === placeId);
   }
 
   const user = await getCurrentUser();
@@ -180,7 +180,7 @@ export async function isFavorite(placeId: string): Promise<boolean> {
 }
 
 // Real-time subscription for auth changes
-export function onAuthStateChange(callback: (user: any) => void) {
+export function onAuthStateChange(callback: (user: unknown) => void) {
   if (!supabase) {
     return { data: { subscription: { unsubscribe: () => {} } } };
   }

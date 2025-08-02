@@ -54,7 +54,17 @@ export async function GET(request: NextRequest) {
     }
 
     // Mappa Google Places resultatet till vårt format
-    const places = data.results?.map((place: any) => ({
+    const places = data.results?.map((place: {
+      place_id: string;
+      name: string;
+      formatted_address: string;
+      rating?: number;
+      price_level?: number;
+      types?: string[];
+      opening_hours?: { open_now?: boolean };
+      geometry: { location: { lat: number; lng: number } };
+      photos?: Array<{ photo_reference: string; height: number; width: number }>;
+    }) => ({
       place_id: place.place_id,
       name: place.name,
       formatted_address: place.formatted_address,
@@ -70,7 +80,7 @@ export async function GET(request: NextRequest) {
           lng: place.geometry.location.lng
         }
       },
-      photos: place.photos?.slice(0, 1).map((photo: any) => ({
+      photos: place.photos?.slice(0, 1).map((photo: { photo_reference: string; height: number; width: number }) => ({
         photo_reference: photo.photo_reference,
         height: photo.height,
         width: photo.width

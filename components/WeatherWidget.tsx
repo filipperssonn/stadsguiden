@@ -4,7 +4,8 @@ import { useEffect, useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Cloud, Thermometer, Droplets, Wind } from "lucide-react";
+import { Cloud, Droplets, Wind } from "lucide-react";
+import Image from "next/image";
 import {
   getCurrentWeather,
   getWeatherIconUrl,
@@ -92,10 +93,13 @@ export default function WeatherWidget({
       <CardContent className={`${compact ? "p-0" : "p-0"} space-y-3`}>
         <div className="flex items-center gap-3">
           <div className="relative bg-white/80 backdrop-blur-sm rounded-2xl p-2 shadow-lg">
-            <img
+            <Image
               src={getWeatherIconUrl(weather.icon)}
               alt={weather.description}
+              width={48}
+              height={48}
               className="h-12 w-12 drop-shadow-sm"
+              loading="lazy"
               onError={(e) => {
                 const target = e.target as HTMLImageElement;
                 target.style.display = "none";

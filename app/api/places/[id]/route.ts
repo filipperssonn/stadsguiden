@@ -98,7 +98,7 @@ export async function GET(
       website: place.website,
       formatted_phone_number: place.formatted_phone_number,
       international_phone_number: place.international_phone_number,
-      reviews: place.reviews?.slice(0, 5).map((review: any) => ({
+      reviews: place.reviews?.slice(0, 5).map((review: { author_name: string; rating: number; text: string; time: number }) => ({
         author_name: review.author_name,
         rating: review.rating,
         text: review.text,
@@ -107,7 +107,7 @@ export async function GET(
       editorial_summary: place.editorial_summary ? {
         overview: place.editorial_summary.overview
       } : undefined,
-      photos: place.photos?.slice(0, 5).map((photo: any) => ({
+      photos: place.photos?.slice(0, 5).map((photo: { photo_reference: string; height: number; width: number }) => ({
         photo_reference: photo.photo_reference,
         height: photo.height,
         width: photo.width

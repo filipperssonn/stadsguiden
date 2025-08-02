@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
+import { CityProvider } from "@/lib/contexts/CityContext";
 import "./globals.css";
 
 const inter = Inter({
@@ -15,14 +16,30 @@ export const metadata: Metadata = {
     default: "Stadsguiden - Upptäck din stad",
   },
   description:
-    "Hitta de bästa restaurangerna, butikerna och sevärdheterna i din stad. Upptäck nya platser och utforska med dagens väder. Powered by Google Places API.",
+    "Hitta de bästa restaurangerna, butikerna och sevärdheterna i svenska städer. Upptäck nya platser och utforska med dagens väder. Powered by Google Places API.",
   keywords: [
     "stadsguide",
     "restauranger",
     "butiker",
     "sevärdheter",
-    "Karlstad",
+    "Sverige",
+    "svenska städer",
     "Stockholm",
+    "Göteborg", 
+    "Malmö",
+    "Uppsala",
+    "Linköping",
+    "Örebro",
+    "Västerås",
+    "Helsingborg",
+    "Jönköping",
+    "Norrköping",
+    "Lund",
+    "Umeå",
+    "Gävle",
+    "Borås",
+    "Eskilstuna",
+    "Karlstad",
     "väder",
     "Google Places",
     "sök platser",
@@ -50,12 +67,12 @@ export const metadata: Metadata = {
     locale: "sv_SE",
     title: "Stadsguiden - Upptäck din stad",
     description:
-      "Hitta de bästa restaurangerna, butikerna och sevärdheterna i din stad. Upptäck nya platser och utforska med dagens väder.",
+      "Hitta de bästa restaurangerna, butikerna och sevärdheterna i svenska städer. Upptäck nya platser och utforska med dagens väder.",
     siteName: "Stadsguiden",
     url: "https://stadsguiden.vercel.app",
     images: [
       {
-        url: "/logo.svg",
+        url: "/stadsguiden-logo.svg",
         width: 1200,
         height: 630,
         alt: "Stadsguiden - Upptäck din stad",
@@ -66,8 +83,8 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "Stadsguiden - Upptäck din stad",
     description:
-      "Hitta de bästa restaurangerna, butikerna och sevärdheterna i din stad.",
-    images: ["/logo.svg"],
+      "Hitta de bästa restaurangerna, butikerna och sevärdheterna i svenska städer.",
+    images: ["/stadsguiden-logo.svg"],
     creator: "@stadsguiden",
   },
   robots: {
@@ -100,7 +117,15 @@ export default function RootLayout({
   return (
     <html lang="sv" className={inter.variable}>
       <body className={`${inter.className} antialiased font-sans`}>
-        {children}
+        <a 
+          href="#main-content" 
+          className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 bg-primary text-white px-4 py-2 rounded-md z-50 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
+        >
+          Hoppa till huvudinnehåll
+        </a>
+        <CityProvider>
+          {children}
+        </CityProvider>
       </body>
     </html>
   );

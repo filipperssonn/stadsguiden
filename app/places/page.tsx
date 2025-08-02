@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, Suspense } from "react";
+import { useState, useEffect, useCallback, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -11,12 +11,14 @@ import AdvancedFilters, { FilterOptions } from "@/components/AdvancedFilters";
 import PlaceCard from "@/components/PlaceCard";
 import WeatherWidget from "@/components/WeatherWidget";
 import { searchPlaces, Place } from "@/lib/googlePlaces";
-import { ArrowLeft, MapPin, Search } from "lucide-react";
+import { useCity } from "@/lib/contexts/CityContext";
+import { ArrowLeft, Search } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
 
 function PlacesContent() {
   const searchParams = useSearchParams();
+  const { selectedCity } = useCity();
   const [places, setPlaces] = useState<Place[]>([]);
   const [filteredPlaces, setFilteredPlaces] = useState<Place[]>([]);
   const [loading, setLoading] = useState(false);
@@ -26,6 +28,8 @@ function PlacesContent() {
 
   const initialQuery = searchParams.get("q") || "";
   const initialCategory = searchParams.get("category") || "all";
+  const cityFromUrl = searchParams.get("city");
+  const currentCity = cityFromUrl || selectedCity || "Stockholm";
 
   const [query, setQuery] = useState(initialQuery);
   const [selectedCategory, setSelectedCategory] = useState(initialCategory);
@@ -94,7 +98,7 @@ function PlacesContent() {
     setFilteredPlaces(filtered);
   };
 
-  const performSearch = async (searchQuery: string, category: string) => {
+  const performSearch = useCallback(async (searchQuery: string, category: string) => {
     setLoading(true);
     setError(null);
     setHasSearched(true);
@@ -102,7 +106,7 @@ function PlacesContent() {
     try {
       const results = await searchPlaces(
         searchQuery,
-        "Karlstad",
+        currentCity,
         category === "all" ? undefined : category
       );
       setPlaces(results);
@@ -113,14 +117,14 @@ function PlacesContent() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [currentCity, filters]);
 
   // Initial search on page load
   useEffect(() => {
     if (initialQuery || initialCategory !== "all") {
       performSearch(initialQuery, initialCategory);
     }
-  }, [initialQuery, initialCategory]);
+  }, [initialQuery, initialCategory, performSearch]);
 
   // Apply filters when they change
   useEffect(() => {
@@ -172,23 +176,24 @@ function PlacesContent() {
               </Link>
               <Link
                 href="/"
-                className="flex items-center hover:opacity-80 transition-opacity cursor-pointer"
+                className="flex items-center hover:opacity-80 transition-opacity cursor-pointer flex-shrink-0"
               >
                 <Image
-                  src="/logo.svg"
+                  src="/stadsguiden-logo.svg"
                   alt="Stadsguiden"
-                  width={140}
-                  height={39}
+                  width={160}
+                  height={50}
                   priority
+                  className="max-w-none"
                 />
               </Link>
             </div>
-            <WeatherWidget compact />
+            <WeatherWidget compact city={currentCity} />
           </div>
         </div>
       </header>
 
-      <main className="container mx-auto px-4 py-8 space-y-8">
+      <main id="main-content" className="container mx-auto px-4 py-8 space-y-8">
         {/* Search Section */}
         <div className="bg-white/60 backdrop-blur-sm rounded-3xl p-6 border border-gray-100 shadow-lg">
           <div className="space-y-6">
@@ -232,7 +237,7 @@ function PlacesContent() {
                 </h2>
                 {query && (
                   <p className="text-gray-600">
-                    för "{query}"{" "}
+                    för &quot;{query}&quot;{" "}
                     {selectedCategory !== "all" &&
                       `i kategorin ${selectedCategory}`}
                   </p>

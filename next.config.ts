@@ -5,9 +5,9 @@ const nextConfig: NextConfig = {
   compress: true,
   poweredByHeader: false,
   
-  // Ignorera ESLint fel under bygge för snabb deployment
+  // ESLint konfiguration
   eslint: {
-    ignoreDuringBuilds: true,
+    ignoreDuringBuilds: false,
   },
   
   // Bildoptimering

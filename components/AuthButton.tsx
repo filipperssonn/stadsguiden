@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
-import { User, LogIn, LogOut, Heart, Mail, Lock, UserPlus } from "lucide-react";
+import { User as UserIcon, LogIn, LogOut, Mail, Lock, UserPlus } from "lucide-react";
 import {
   signIn,
   signUp,
@@ -14,16 +14,23 @@ import {
   onAuthStateChange,
 } from "@/lib/supabase";
 
+interface User {
+  email?: string;
+  user_metadata?: {
+    full_name?: string;
+  };
+}
+
 interface AuthButtonProps {
   variant?: "default" | "compact";
-  onAuthChange?: (user: any) => void;
+  onAuthChange?: (user: User | null) => void;
 }
 
 export default function AuthButton({
   variant = "default",
   onAuthChange,
 }: AuthButtonProps) {
-  const [user, setUser] = useState<any>(null);
+  const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
   const [showAuth, setShowAuth] = useState(false);
   const [isSignUp, setIsSignUp] = useState(false);
@@ -36,17 +43,18 @@ export default function AuthButton({
   useEffect(() => {
     // Kontrollera om användaren redan är inloggad
     getCurrentUser().then((currentUser) => {
-      setUser(currentUser);
+      setUser(currentUser as User | null);
       setLoading(false);
-      onAuthChange?.(currentUser);
+      onAuthChange?.(currentUser as User | null);
     });
 
     // Lyssna på ändringar i autentiseringsstatus
     const {
       data: { subscription },
     } = onAuthStateChange((authUser) => {
-      setUser(authUser);
-      onAuthChange?.(authUser);
+      const typedUser = authUser as User | null;
+      setUser(typedUser);
+      onAuthChange?.(typedUser);
     });
 
     return () => subscription?.unsubscribe?.();
@@ -70,8 +78,8 @@ export default function AuthButton({
       setEmail("");
       setPassword("");
       setFullName("");
-    } catch (err: any) {
-      setError(err.message || "Något gick fel. Försök igen.");
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : "Något gick fel. Försök igen.");
     } finally {
       setAuthLoading(false);
     }
@@ -81,8 +89,8 @@ export default function AuthButton({
     try {
       await signOut();
       setUser(null);
-    } catch (err: any) {
-      setError(err.message);
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : "Något gick fel vid utloggning.");
     }
   };
 
@@ -103,7 +111,7 @@ export default function AuthButton({
         {user ? (
           <div className="flex items-center gap-2">
             <div className="w-8 h-8 city-primary rounded-full flex items-center justify-center">
-              <User className="h-4 w-4 text-white" />
+              <UserIcon className="h-4 w-4 text-white" />
             </div>
             <Button
               onClick={handleSignOut}
@@ -135,7 +143,7 @@ export default function AuthButton({
         <div className="flex items-center gap-3">
           <div className="flex items-center gap-2">
             <div className="w-10 h-10 city-primary rounded-2xl flex items-center justify-center">
-              <User className="h-5 w-5 text-white" />
+              <UserIcon className="h-5 w-5 text-white" />
             </div>
             <div className="hidden sm:block">
               <p className="text-sm font-medium text-gray-900">
@@ -192,7 +200,7 @@ export default function AuthButton({
                       Fullständigt namn
                     </label>
                     <div className="relative">
-                      <User className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
+                      <UserIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
                       <Input
                         type="text"
                         value={fullName}

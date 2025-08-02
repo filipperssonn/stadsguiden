@@ -24,6 +24,7 @@ async function getPlaceData(placeId: string) {
           if (data.result) {
             console.log('✅ Hämtade metadata från Google Places API');
             return {
+              place_id: placeId,
               name: data.result.name,
               formatted_address: data.result.formatted_address,
               rating: data.result.rating,
@@ -40,8 +41,9 @@ async function getPlaceData(placeId: string) {
     // Fallback för okända place_id:n
     console.log('🔄 Använder generisk metadata för okänd place_id');
     return {
+      place_id: placeId,
       name: 'Okänd plats',
-      formatted_address: 'Karlstad',
+      formatted_address: 'Sverige',
       rating: null,
       types: ['establishment'],
       editorial_summary: { overview: 'Information om denna plats kommer att laddas när sidan öppnas.' }
@@ -67,17 +69,23 @@ export async function generateMetadata(
     };
   }
 
+  // Extrahera stad från adress
+  const addressParts = place.formatted_address?.split(', ') || [];
+  const extractedCity = addressParts.find((part: string) => 
+    !part.includes('Sweden') && !part.match(/^\d{3}\s?\d{2}/) // Inte postnummer
+  ) || 'Sverige';
+
   const title = `${place.name} - Stadsguiden`;
   const description = place.editorial_summary?.overview 
-    ? `${place.editorial_summary.overview} ${place.formatted_address}. Betyg: ${place.rating}/5.`
-    : `Upptäck ${place.name} i ${place.formatted_address}. Betyg: ${place.rating}/5.`;
+    ? `${place.editorial_summary.overview} ${place.formatted_address}. ${place.rating ? `Betyg: ${place.rating}/5.` : ''}`
+    : `Upptäck ${place.name} i ${place.formatted_address}. ${place.rating ? `Betyg: ${place.rating}/5.` : ''}`;
 
   return {
     title,
     description,
     keywords: [
       place.name,
-      'Karlstad',
+      extractedCity,
       'stadsguide',
       ...place.types,
       'restaurant',
@@ -119,13 +127,18 @@ export default async function PlaceDetailPage({ params }: PageProps) {
   const { id: placeId } = await params;
   const place = await getPlaceData(placeId);
   
+  // Extrahera stad från adress för JSON-LD
+  const extractedCity = place ? (place.formatted_address?.split(', ').find((part: string) => 
+    !part.includes('Sweden') && !part.match(/^\d{3}\s?\d{2}/)
+  ) || 'Sverige') : undefined;
+  
   return (
     <>
       {place && (
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{
-            __html: JSON.stringify(generatePlaceJsonLd(place)),
+            __html: JSON.stringify(generatePlaceJsonLd(place, extractedCity)),
           }}
         />
       )}

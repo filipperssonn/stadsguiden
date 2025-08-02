@@ -1,6 +1,5 @@
 "use client";
 
-import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
@@ -39,7 +38,7 @@ export default function AdvancedFilters({
   isExpanded,
   onToggleExpanded,
 }: AdvancedFiltersProps) {
-  const updateFilter = (key: keyof FilterOptions, value: any) => {
+  const updateFilter = (key: keyof FilterOptions, value: string | boolean) => {
     onFiltersChange({
       ...filters,
       [key]: value,
@@ -237,7 +236,7 @@ export default function AdvancedFilters({
                 <div className="flex flex-wrap gap-2">
                   {filters.nameSearch && (
                     <Badge variant="secondary" className="bg-blue-100 text-blue-700">
-                      Namn: "{filters.nameSearch}"
+                      Namn: &quot;{filters.nameSearch}&quot;
                     </Badge>
                   )}
                   {filters.ratingFilter !== 'all' && (

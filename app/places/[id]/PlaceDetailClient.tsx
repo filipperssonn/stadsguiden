@@ -69,7 +69,7 @@ export default function PlaceDetailClient() {
           text: `Kolla in ${place.name} på Stadsguiden`,
           url: window.location.href,
         });
-      } catch (err) {
+      } catch {
         console.log("Share cancelled");
       }
     } else {
@@ -176,14 +176,15 @@ export default function PlaceDetailClient() {
               </Link>
               <Link
                 href="/"
-                className="flex items-center hover:opacity-80 transition-opacity cursor-pointer"
+                className="flex items-center hover:opacity-80 transition-opacity cursor-pointer flex-shrink-0"
               >
                 <Image
-                  src="/logo.svg"
+                  src="/stadsguiden-logo.svg"
                   alt="Stadsguiden"
-                  width={140}
-                  height={39}
+                  width={160}
+                  height={50}
                   priority
+                  className="max-w-none"
                 />
               </Link>
             </div>
