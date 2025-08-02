@@ -11,8 +11,18 @@ export async function GET(request: NextRequest) {
 
   // Kontrollera om vi har giltig API-nyckel
   if (!GOOGLE_API_KEY || GOOGLE_API_KEY.includes('your_')) {
-    console.error('❌ Ingen giltig Google API-nyckel konfigurerad');
-    return NextResponse.json({ error: 'API-nyckel saknas eller ogiltig' }, { status: 500 });
+    console.error('❌ Ingen giltig Google API-nyckel konfigurerad:', {
+      hasKey: !!GOOGLE_API_KEY,
+      keyPreview: GOOGLE_API_KEY ? GOOGLE_API_KEY.substring(0, 10) + '...' : 'undefined',
+      envKeys: Object.keys(process.env).filter(key => key.includes('GOOGLE'))
+    });
+    return NextResponse.json({ 
+      error: 'API-nyckel saknas eller ogiltig',
+      debug: {
+        hasKey: !!GOOGLE_API_KEY,
+        keyPreview: GOOGLE_API_KEY ? GOOGLE_API_KEY.substring(0, 10) + '...' : 'undefined'
+      }
+    }, { status: 500 });
   }
 
   try {
@@ -73,7 +83,15 @@ export async function GET(request: NextRequest) {
   } catch (error) {
     console.error('❌ Fel vid anrop till Google Places API:', error);
     
-    // Returnera fel istället för mock data
-    return NextResponse.json({ error: 'Kunde inte hämta platser' }, { status: 500 });
+    return NextResponse.json({ 
+      error: 'Kunde inte hämta platser',
+      debug: {
+        message: error instanceof Error ? error.message : 'Unknown error',
+        query: query,
+        location: location,
+        type: type,
+        hasApiKey: !!GOOGLE_API_KEY
+      }
+    }, { status: 500 });
   }
 }

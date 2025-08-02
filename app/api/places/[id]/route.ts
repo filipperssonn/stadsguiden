@@ -12,8 +12,18 @@ export async function GET(
 
   // Kontrollera om vi har giltig API-nyckel
   if (!GOOGLE_API_KEY || GOOGLE_API_KEY.includes('your_')) {
-    console.error('❌ Ingen giltig Google API-nyckel konfigurerad');
-    return NextResponse.json({ error: 'API-nyckel saknas eller ogiltig' }, { status: 500 });
+    console.error('❌ Ingen giltig Google API-nyckel konfigurerad för place details:', {
+      hasKey: !!GOOGLE_API_KEY,
+      keyPreview: GOOGLE_API_KEY ? GOOGLE_API_KEY.substring(0, 10) + '...' : 'undefined',
+      envKeys: Object.keys(process.env).filter(key => key.includes('GOOGLE'))
+    });
+    return NextResponse.json({ 
+      error: 'API-nyckel saknas eller ogiltig',
+      debug: {
+        hasKey: !!GOOGLE_API_KEY,
+        keyPreview: GOOGLE_API_KEY ? GOOGLE_API_KEY.substring(0, 10) + '...' : 'undefined'
+      }
+    }, { status: 500 });
   }
 
   try {
