@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
+import { Analytics } from "@vercel/analytics/react";
 import { CityProvider } from "@/lib/contexts/CityContext";
 import "./globals.css";
 
@@ -138,6 +139,7 @@ export default function RootLayout({
         <CityProvider>
           {children}
         </CityProvider>
+        <Analytics />
       </body>
     </html>
   );
